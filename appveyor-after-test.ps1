@@ -9,6 +9,8 @@ $json = Get-Content '.\\package\\info\\index.json' | Out-String | ConvertFrom-Js
 
 # Add members to info.json:
 $json | Add-Member git_repository $($env:GIT_REPOSITORY);
+$json | Add-Member git_repo_name $($env:APPVEYOR_REPO_NAME);
+$json | Add-Member git_repo_branch $($env:APPVEYOR_REPO_BRANCH);
 $json | ConvertTo-JSON | % { [System.Text.RegularExpressions.Regex]::Unescape($_) } | Set-Content .\package\info\index.json;
 
 # re-archive package
