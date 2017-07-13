@@ -16,8 +16,8 @@ conda update -q conda
 conda install --yes conda-build anaconda-client
 
 REM Create and activate new NadaMq environment
-conda create --name %APPVEYOR_PROJECT_NAME %
-call %MINICONDA%\\Scripts\\activate.bat %APPVEYOR_PROJECT_NAME %
+conda create --name %APPVEYOR_PROJECT_NAME%
+call %MINICONDA%\\Scripts\\activate.bat %APPVEYOR_PROJECT_NAME%
 REM conda info -a
 
 REM Get output package location
