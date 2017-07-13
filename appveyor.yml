@@ -1,0 +1,24 @@
+environment:
+  matrix:
+    - PYTHON_VERSION: 2.7
+      MINICONDA: C:\Miniconda
+      PYTHON_ARCH: "32"
+
+version: '1.0.{build}'
+
+init:
+  - "ECHO %PYTHON_VERSION% %MINICONDA%"
+
+install:
+  # Add Conda with necessary channels
+  - set PATH=%MINICONDA%;%MINICONDA%\\Scripts;%PATH%
+  - conda config --set always_yes yes --set changeps1 no
+  - conda config --add channels conda-forge
+  - conda config --add channels wheeler-microfluidics
+
+  # Install requirements for generate-ci-files.py
+  - conda install configparser jinja2
+
+build: false
+test_script:
+  - python generate-ci-files.py
