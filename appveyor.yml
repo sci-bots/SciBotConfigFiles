@@ -24,8 +24,6 @@ install:
   - ps: Add-Content "$env:USERPROFILE\.git-credentials" "https://$($env:access_token):x-oauth-basic@github.com`n"
   - git config --global user.email "build@sci-bots.com"
   - git config --global user.name "sci-bots-build"
-  - git commit ...
-  - git push ...
 
 build: false
 test_script:
