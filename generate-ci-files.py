@@ -28,9 +28,23 @@ with open('wheeler_package_names.json') as data_file:
 cwd = os.getcwd()
 
 for name in package_names:
+    # Get markdown for AppVeyor Badge
+    appveyor_root = "https://ci.appveyor.com/api/projects/status/github/wheeler-microfluidics/"
+    appveyor_badge_url = appveyor_root+name+"?branch=master&svg=true"
+    appveyor_badge = "!["+appveyor_badge_url+"]("+appveyor_badge_url+")"
+
     # Clone Repository
     if os.path.isdir('./'+name): rmtree(name)
     subprocess.check_call(["git", "clone", "https://github.com/wheeler-microfluidics/"+name+".git"])
+
+    # Store README as string:
+    with open('README.md', 'r') as myfile: readme=myfile.read()
+    readme = readme.split("\n")
+
+    # If first line is not badge then append it
+    if readme[0] != appveyor_badge:
+        readme.insert(0,appveyor_badge)
+        with open('README.md', "w") as myfile: myfile.write('\n'.join(readme))
 
     # Change into Repository
     os.chdir(os.path.join(cwd, name))
