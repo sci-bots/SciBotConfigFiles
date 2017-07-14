@@ -49,7 +49,7 @@ for name in package_names:
         with open('README'+readme_extension, 'r') as myfile: readme=myfile.read()
         readme = readme.split("\n")
 
-        if readme[0] == "\n" and reame[1] == appveyor_badge:
+        if readme[0] == "\n" and readme[1] == appveyor_badge:
             readme = readme[1::]
             try:
                 with open('README'+readme_extension, "w") as myfile: myfile.write('\n'.join(readme))
