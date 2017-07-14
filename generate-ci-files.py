@@ -40,9 +40,15 @@ for name in package_names:
     config.read('.git/config')
     git_url = config['remote "origin"']['url']
 
+    # Get package version number:
+    try:
+        version_number = '.'.join(subprocess.check_output(["git", "describe","--tags"]).split("-")[0:2])[1::]
+    except:
+        version_number = 'not set'
+
     # Write to file
     appveyorFile = open("appveyor.yml","w")
-    appveyorFile.write(template.render({"git_url": git_url}))
+    appveyorFile.write(template.render({"git_url": git_url, "version_number": version_number}))
     appveyorFile.close()
 
     # Commit changes, and push upsteam
