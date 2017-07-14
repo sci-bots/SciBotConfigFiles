@@ -53,8 +53,11 @@ for name in package_names:
         if readme[0] != appveyor_badge:
             readme.insert(0,appveyor_badge)
             readme.insert(0,"\n")
-            with open('README'+readme_extension, "w") as myfile: myfile.write('\n'.join(readme))
-            subprocess.check_call(["git", "add", "README"+readme_extension])
+            try:
+                with open('README'+readme_extension, "w") as myfile: myfile.write('\n'.join(readme))
+                subprocess.check_call(["git", "add", "README"+readme_extension])
+            except:
+                subprocess.check_call(["appveyor", "AddMessage", "Issues with Readme File for: "+name,"--category","warning"])
 
     # Fetch Remote URL from Git Repository
     config = configparser.ConfigParser()
