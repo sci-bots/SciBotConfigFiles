@@ -49,7 +49,7 @@ for name in package_names:
         with open('README'+readme_extension, 'r') as myfile: readme=myfile.read()
         readme = readme.split("\n")
 
-        if readme[0] == "\n":
+        if readme[0] == "\n" and reame[1] == appveyor_badge:
             readme = readme[1::]
             try:
                 with open('README'+readme_extension, "w") as myfile: myfile.write('\n'.join(readme))
@@ -68,29 +68,29 @@ for name in package_names:
         #     except:
         #         subprocess.check_call(["appveyor", "AddMessage", "Issues with Readme File for: "+name,"-Category","warning"])
 
-    # # Fetch Remote URL from Git Repository
-    # config = configparser.ConfigParser()
-    # config.read('.git/config')
-    # git_url = config['remote "origin"']['url']
-    #
-    # # Get package version number:
-    # try:
-    #     version_number = '.'.join(subprocess.check_output(["git", "describe","--tags"]).split("-")[0:2])[1::]
-    # except:
-    #     version_number = 'not set'
-    #
-    # # Write to file
-    # appveyorFile = open("appveyor.yml","w")
-    # appveyorFile.write(template.render({"git_url": git_url, "version_number": version_number}))
-    # appveyorFile.close()
-    #
-    # # Commit changes, and push upsteam
-    # try:
-    #     subprocess.check_call(["git", "add", "appveyor.yml"])
-    #     subprocess.check_call(["git", "commit", "-m", "AppVeyor Configuration Updated"])
-    #     subprocess.check_call(["git", "push", "origin", "master"])
-    # except:
-    #     pass
+    # Fetch Remote URL from Git Repository
+    config = configparser.ConfigParser()
+    config.read('.git/config')
+    git_url = config['remote "origin"']['url']
+
+    # Get package version number:
+    try:
+        version_number = '.'.join(subprocess.check_output(["git", "describe","--tags"]).split("-")[0:2])[1::]
+    except:
+        version_number = 'not set'
+
+    # Write to file
+    appveyorFile = open("appveyor.yml","w")
+    appveyorFile.write(template.render({"git_url": git_url, "version_number": version_number}))
+    appveyorFile.close()
+
+    # Commit changes, and push upsteam
+    try:
+        subprocess.check_call(["git", "add", "appveyor.yml"])
+        subprocess.check_call(["git", "commit", "-m", "AppVeyor Configuration Updated"])
+        subprocess.check_call(["git", "push", "origin", "master"])
+    except:
+        pass
 
     # Change out of Repository
     os.chdir(cwd)
