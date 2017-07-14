@@ -48,7 +48,7 @@ for name in package_names:
     # Commit changes, and push upsteam
     try:
         subprocess.check_call(["git", "add", "appveyor.yml"])
-        subprocess.check_call(["git", "commit", "-m", "added appveyor.yml"])
+        subprocess.check_call(["git", "commit", "-m", "AppVeyor Configuration Updated"])
         subprocess.check_call(["git", "push", "origin", "master"])
     except:
         pass
