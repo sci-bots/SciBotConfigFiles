@@ -37,6 +37,9 @@ for name in package_names:
     if os.path.isdir('./'+name): rmtree(name)
     subprocess.check_call(["git", "clone", "https://github.com/wheeler-microfluidics/"+name+".git"])
 
+    # Change into Repository
+    os.chdir(os.path.join(cwd, name))
+
     # Store README as string:
     with open('README.md', 'r') as myfile: readme=myfile.read()
     readme = readme.split("\n")
@@ -45,9 +48,7 @@ for name in package_names:
     if readme[0] != appveyor_badge:
         readme.insert(0,appveyor_badge)
         with open('README.md', "w") as myfile: myfile.write('\n'.join(readme))
-
-    # Change into Repository
-    os.chdir(os.path.join(cwd, name))
+        subprocess.check_call(["git", "add", "README.md"])
 
     # Fetch Remote URL from Git Repository
     config = configparser.ConfigParser()
