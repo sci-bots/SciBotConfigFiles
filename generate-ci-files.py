@@ -40,16 +40,21 @@ for name in package_names:
     # Change into Repository
     os.chdir(os.path.join(cwd, name))
 
-    if os.path.isfile('./README.md'):
+    readme_exists = False
+    os.path.isfile('./README.md'): readme_extension = '.md';readme_exists=True
+    os.path.isfile('./README.txt'): readme_extension = '.txt';readme_exists=True
+    os.path.isfile('./README.metadata'): readme_extension = '.metadata';readme_exists=True
+
+    if readme_exists:
         # Store README as string:
-        with open('README.md', 'r') as myfile: readme=myfile.read()
+        with open('README'+readme_extension, 'r') as myfile: readme=myfile.read()
         readme = readme.split("\n")
 
         # If first line is not badge then append it
         if readme[0] != appveyor_badge:
             readme.insert(0,appveyor_badge)
-            with open('README.md', "w") as myfile: myfile.write('\n'.join(readme))
-            subprocess.check_call(["git", "add", "README.md"])
+            with open('README'+readme_extension, "w") as myfile: myfile.write('\n'.join(readme))
+            subprocess.check_call(["git", "add", "README"+readme_extension])
 
     # Fetch Remote URL from Git Repository
     config = configparser.ConfigParser()
