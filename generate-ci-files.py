@@ -40,15 +40,16 @@ for name in package_names:
     # Change into Repository
     os.chdir(os.path.join(cwd, name))
 
-    # Store README as string:
-    with open('README.md', 'r') as myfile: readme=myfile.read()
-    readme = readme.split("\n")
+    if os.path.isdir('./README.md'):
+        # Store README as string:
+        with open('README.md', 'r') as myfile: readme=myfile.read()
+        readme = readme.split("\n")
 
-    # If first line is not badge then append it
-    if readme[0] != appveyor_badge:
-        readme.insert(0,appveyor_badge)
-        with open('README.md', "w") as myfile: myfile.write('\n'.join(readme))
-        subprocess.check_call(["git", "add", "README.md"])
+        # If first line is not badge then append it
+        if readme[0] != appveyor_badge:
+            readme.insert(0,appveyor_badge)
+            with open('README.md', "w") as myfile: myfile.write('\n'.join(readme))
+            subprocess.check_call(["git", "add", "README.md"])
 
     # Fetch Remote URL from Git Repository
     config = configparser.ConfigParser()
