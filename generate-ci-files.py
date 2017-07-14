@@ -41,9 +41,9 @@ for name in package_names:
     os.chdir(os.path.join(cwd, name))
 
     readme_exists = False
-    os.path.isfile('./README.md'): readme_extension = '.md';readme_exists=True
-    os.path.isfile('./README.txt'): readme_extension = '.txt';readme_exists=True
-    os.path.isfile('./README.metadata'): readme_extension = '.metadata';readme_exists=True
+    if os.path.isfile('./README.md'): readme_extension = '.md';readme_exists=True
+    if os.path.isfile('./README.txt'): readme_extension = '.txt';readme_exists=True
+    if os.path.isfile('./README.metadata'): readme_extension = '.metadata';readme_exists=True
 
     if readme_exists:
         # Store README as string:
