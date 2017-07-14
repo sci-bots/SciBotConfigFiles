@@ -42,7 +42,6 @@ for name in package_names:
 
     readme_exists = False
     if os.path.isfile('./README.md'): readme_extension = '.md';readme_exists=True
-    if os.path.isfile('./README.txt'): readme_extension = '.txt';readme_exists=True
     if os.path.isfile('./README.metadata'): readme_extension = '.metadata';readme_exists=True
 
     if readme_exists:
@@ -53,6 +52,7 @@ for name in package_names:
         # If first line is not badge then append it
         if readme[0] != appveyor_badge:
             readme.insert(0,appveyor_badge)
+            readme.insert(0,"\n")
             with open('README'+readme_extension, "w") as myfile: myfile.write('\n'.join(readme))
             subprocess.check_call(["git", "add", "README"+readme_extension])
 
