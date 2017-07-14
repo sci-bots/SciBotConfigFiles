@@ -57,7 +57,7 @@ for name in package_names:
                 with open('README'+readme_extension, "w") as myfile: myfile.write('\n'.join(readme))
                 subprocess.check_call(["git", "add", "README"+readme_extension])
             except:
-                subprocess.check_call(["appveyor", "AddMessage", "Issues with Readme File for: "+name,"--category","warning"])
+                subprocess.check_call(["appveyor", "AddMessage", "Issues with Readme File for: "+name,"-Category","warning"])
 
     # Fetch Remote URL from Git Repository
     config = configparser.ConfigParser()
