@@ -40,7 +40,7 @@ for name in package_names:
     # Change into Repository
     os.chdir(os.path.join(cwd, name))
 
-    if os.path.isdir('./README.md'):
+    if os.path.isfile('./README.md'):
         # Store README as string:
         with open('README.md', 'r') as myfile: readme=myfile.read()
         readme = readme.split("\n")
