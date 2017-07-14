@@ -10,9 +10,6 @@ init:
   - "ECHO %PYTHON_VERSION% %MINICONDA%"
 
 install:
-  # Exit if no .conda-recipe folder
-  - IF NOT EXIST .conda-recipe exit 1
-
   # Add Conda with necessary channels
   - set PATH=%MINICONDA%;%MINICONDA%\\Scripts;%PATH%
   - conda config --set always_yes yes --set changeps1 no
