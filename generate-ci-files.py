@@ -28,6 +28,12 @@ with open('wheeler_package_names.json') as data_file:
 # Get the ID of the last commit to Sci-Bots-Configs:
 sci_bots_configs_id = subprocess.check_output(['git','log','--format="%H"','-n','1'])
 
+# Get the name of the commit as a list
+last_commit = subprocess.check_output(["git","log","-1","--pretty=%B"]).strip().split()
+
+# Check if the commit contains a tag for modify-readme
+mod_readme = '--modify-readme' in last_commit
+
 cwd = os.getcwd()
 
 for name in package_names:
@@ -47,12 +53,14 @@ for name in package_names:
     if os.path.isfile('./README.md'): readme_extension = '.md';readme_exists=True
     if os.path.isfile('./README.metadata'): readme_extension = '.metadata';readme_exists=True
 
-    if readme_exists:
+    if readme_exists and mod_readme:
+        subprocess.check_call(["echo", "EDITING README FILE"])
+
         # Store README as string:
         with open('README'+readme_extension, 'r') as myfile: readme=myfile.read()
         readme = readme.split("\n")
 
-        if readme[0] == "" and readme[1] == "" and readme[2] == appveyor_badge:
+        if readme[0] == appveyor_badge and readme[1] == "" and readme[2] == "":
             readme = readme[2::]
             try:
                 with open('README'+readme_extension, "w") as myfile: myfile.write('\n'.join(readme))
