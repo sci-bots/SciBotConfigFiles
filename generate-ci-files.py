@@ -49,8 +49,8 @@ for name in package_names:
         with open('README'+readme_extension, 'r') as myfile: readme=myfile.read()
         readme = readme.split("\n")
 
-        if readme[0] == "\n" and readme[1] == appveyor_badge:
-            readme = readme[1::]
+        if readme[0] == "\n" and readme[1] == "\n" and readme[2] == appveyor_badge:
+            readme = readme[2::]
             try:
                 with open('README'+readme_extension, "w") as myfile: myfile.write('\n'.join(readme))
                 subprocess.check_call(["git", "add", "README"+readme_extension])
