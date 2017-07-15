@@ -29,7 +29,7 @@ with open('wheeler_package_names.json') as data_file:
 sci_bots_configs_id = subprocess.check_output(['git','log','--format="%H"','-n','1'])
 
 # Get the name of the commit as a list
-last_commit = subprocess.check_output(["git","log","-1","--pretty=%B"]).strip().split()
+last_commit = subprocess.check_output(["git","log","-1","--pretty=%B"]).strip().split()
 
 # Check if the commit contains a tag for modify-readme
 mod_readme = '--modify-readme' in last_commit
