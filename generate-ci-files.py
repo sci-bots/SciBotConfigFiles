@@ -25,6 +25,9 @@ template = templateEnvironment.get_template("appveyor-template.yml")
 with open('wheeler_package_names.json') as data_file:
     package_names = json.load(data_file)["package_names"]
 
+# Get the ID of the last commit to Sci-Bots-Configs:
+sci_bots_configs_id = subprocess.check_output(['git','log','--format="%H"','-n','1'])
+
 cwd = os.getcwd()
 
 for name in package_names:
@@ -49,7 +52,7 @@ for name in package_names:
         with open('README'+readme_extension, 'r') as myfile: readme=myfile.read()
         readme = readme.split("\n")
 
-        if readme[0] == "\n" and readme[1] == "\n" and readme[2] == appveyor_badge:
+        if readme[0] == "" and readme[1] == "" and readme[2] == appveyor_badge:
             readme = readme[2::]
             try:
                 with open('README'+readme_extension, "w") as myfile: myfile.write('\n'.join(readme))
@@ -57,7 +60,7 @@ for name in package_names:
             except:
                 subprocess.check_call(["appveyor", "AddMessage", "Issues with Readme File for: "+name,"-Category","warning"])
 
-
+        # For now, no longer adding badges
         # If first line is not badge then append it
         # if readme[0] != appveyor_badge:
         #     readme.insert(0,"\n")
@@ -87,7 +90,7 @@ for name in package_names:
     # Commit changes, and push upsteam
     try:
         subprocess.check_call(["git", "add", "appveyor.yml"])
-        subprocess.check_call(["git", "commit", "-m", "AppVeyor Configuration Updated"])
+        subprocess.check_call(["git", "commit", "-m", "AppVeyor Update: "+ sci_bots_configs_id])
         subprocess.check_call(["git", "push", "origin", "master"])
     except:
         pass
