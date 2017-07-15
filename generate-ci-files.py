@@ -34,6 +34,10 @@ last_commit = subprocess.check_output(["git","log","-1","--pretty=%B"]).strip().
 # Check if the commit contains a tag for modify-readme
 mod_readme = '--modify-readme' in last_commit
 
+# Check if the commit contains a tag for reverting to previous commit
+revert_back = '--dangerously-revert-back' in last_commit
+if revert_back: commit_to_revert_to = last_commit[last_commit.index('--dangerously-revert-back')+1]
+
 cwd = os.getcwd()
 
 for name in package_names:
@@ -49,35 +53,44 @@ for name in package_names:
     # Change into Repository
     os.chdir(os.path.join(cwd, name))
 
+    # If revert_back set then revert to previous commit
+    if revert_back:
+        # Get commit id of previos commit
+        prev_commit_id = subprocess.check_call(['git','log','--grep', '"Adding tags to commits --modify-readme"', '--pretty=%H'])
+        # TODO: Implement and test reverting to previous commit
+        # https://stackoverflow.com/questions/4114095/how-to-revert-git-repository-to-a-previous-commit
+        subprocess.check_call(["echo", "DANGEROUSLY REVERTING TO:", prev_commit_id])
+
     readme_exists = False
     if os.path.isfile('./README.md'): readme_extension = '.md';readme_exists=True
     if os.path.isfile('./README.metadata'): readme_extension = '.metadata';readme_exists=True
 
     if readme_exists and mod_readme:
-        subprocess.check_call(["echo", "EDITING README FILE"])
 
         # Store README as string:
         with open('README'+readme_extension, 'r') as myfile: readme=myfile.read()
         readme = readme.split("\n")
 
-        if readme[0] == appveyor_badge and readme[1] == "" and readme[2] == "":
-            readme = readme[2::]
-            try:
-                with open('README'+readme_extension, "w") as myfile: myfile.write('\n'.join(readme))
-                subprocess.check_call(["git", "add", "README"+readme_extension])
-            except:
-                subprocess.check_call(["appveyor", "AddMessage", "Issues with Readme File for: "+name,"-Category","warning"])
+        if len(readme) > 2:
+            if readme[0] == appveyor_badge and readme[1] == "" and readme[2] == "":
+                subprocess.check_call(["echo", "EDITING README FILE"])
+                readme = readme[2::]
+                try:
+                    with open('README'+readme_extension, "w") as myfile: myfile.write('\n'.join(readme))
+                    subprocess.check_call(["git", "add", "README"+readme_extension])
+                except:
+                    subprocess.check_call(["appveyor", "AddMessage", "Issues with Readme File for: "+name,"-Category","warning"])
 
-        # For now, no longer adding badges
-        # If first line is not badge then append it
-        # if readme[0] != appveyor_badge:
-        #     readme.insert(0,"\n")
-        #     readme.insert(0,appveyor_badge)
-        #     try:
-        #         with open('README'+readme_extension, "w") as myfile: myfile.write('\n'.join(readme))
-        #         subprocess.check_call(["git", "add", "README"+readme_extension])
-        #     except:
-        #         subprocess.check_call(["appveyor", "AddMessage", "Issues with Readme File for: "+name,"-Category","warning"])
+            # For now, no longer adding badges
+            # If first line is not badge then append it
+            # if readme[0] != appveyor_badge:
+            #     readme.insert(0,"\n")
+            #     readme.insert(0,appveyor_badge)
+            #     try:
+            #         with open('README'+readme_extension, "w") as myfile: myfile.write('\n'.join(readme))
+            #         subprocess.check_call(["git", "add", "README"+readme_extension])
+            #     except:
+            #         subprocess.check_call(["appveyor", "AddMessage", "Issues with Readme File for: "+name,"-Category","warning"])
 
     # Fetch Remote URL from Git Repository
     config = configparser.ConfigParser()
