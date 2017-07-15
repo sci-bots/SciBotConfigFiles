@@ -56,7 +56,7 @@ for name in package_names:
     # If revert_back set then revert to previous commit
     if revert_back:
         # Get commit id of previos commit
-        prev_commit_id = subprocess.check_call(['git','log','--grep', '"Adding tags to commits --modify-readme"', '--pretty=%H'])
+        prev_commit_id = subprocess.check_call(['git','log','--grep', '"Adding tags to commits --modify-readme"', '--pretty=%H'])
         # TODO: Implement and test reverting to previous commit
         # https://stackoverflow.com/questions/4114095/how-to-revert-git-repository-to-a-previous-commit
         subprocess.check_call(["echo", "DANGEROUSLY REVERTING TO:", prev_commit_id])
