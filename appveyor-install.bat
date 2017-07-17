@@ -22,15 +22,11 @@ REM conda info -a
 
 REM Get output package location
 echo "Getting package location:"
-FOR /F "tokens=*" %%a in (
-  conda-build . --output
-
-  IF %ERRORLEVEL% NEQ 0 (
-    appveyor AddMessage "Failed to get package location. May be problem in meta.yaml file" -Category Error
-    exit 1
-  )
-) do SET PACKAGE_LOCATION=%%a
-
+FOR /F "tokens=*" %%a in ('conda-build . --output') do SET PACKAGE_LOCATION=%%a
+IF ERRORLEVEL NEQ 0 (
+  appveyor AddMessage "Failed to get package location. May be problem in meta.yaml file" -Category Error
+  exit 1
+)
 echo %PACKAGE_LOCATION%
 
 
