@@ -23,101 +23,83 @@ sci_bots_configs_id = subprocess.check_output(['git','log','--format="%H"','-n',
 # Get the name of the commit as a list
 last_commit = subprocess.check_output(["git","log","-1","--pretty=%B"]).strip().split()
 
+# Pass re-build, to re-build all the packages in
+# wheeler_package_names.json file
+should_rebuild = '--rebuild' in last_commit
+
 # Check if the commit contains a tag for modify-readme
 mod_readme = '--modify-readme' in last_commit
 
-# Check if the commit contains a tag for reverting to previous commit
-revert_back = '--dangerously-revert-back' in last_commit
-if revert_back: commit_to_revert_to = last_commit[last_commit.index('--dangerously-revert-back')+1]
+if should_rebuild:
+    cwd = os.getcwd()
 
-cwd = os.getcwd()
+    # Load AppVeyor template (for Windows Installs)
+    templateEnvironment = Environment( loader=FileSystemLoader( searchpath="./" ) )
+    template = templateEnvironment.get_template("appveyor-template.yml")
 
-# Load AppVeyor template (for Windows Installs)
-templateEnvironment = Environment( loader=FileSystemLoader( searchpath="./" ) )
-template = templateEnvironment.get_template("appveyor-template.yml")
+    # Open json file containing all package names:
+    with open('wheeler_package_names.json') as data_file:
+        package_names = json.load(data_file)["package_names"]
 
-# Open json file containing all package names:
-with open('wheeler_package_names.json') as data_file:
-    package_names = json.load(data_file)["package_names"]
+    for name in package_names:
+        # Get markdown for AppVeyor Badge
+        appveyor_root = "https://ci.appveyor.com/api/projects/status/github/wheeler-microfluidics/"
+        appveyor_badge_url = appveyor_root+name+"?branch=master&svg=true"
+        appveyor_badge = "!["+appveyor_badge_url+"]("+appveyor_badge_url+")"
 
-for name in package_names:
-    # Get markdown for AppVeyor Badge
-    appveyor_root = "https://ci.appveyor.com/api/projects/status/github/wheeler-microfluidics/"
-    appveyor_badge_url = appveyor_root+name+"?branch=master&svg=true"
-    appveyor_badge = "!["+appveyor_badge_url+"]("+appveyor_badge_url+")"
+        # Clone Repository
+        if os.path.isdir('./'+name): rmtree(name)
+        subprocess.check_call(["git", "clone", "https://github.com/wheeler-microfluidics/"+name+".git"])
 
-    # Clone Repository
-    if os.path.isdir('./'+name): rmtree(name)
-    subprocess.check_call(["git", "clone", "https://github.com/wheeler-microfluidics/"+name+".git"])
+        # Change into Repository
+        os.chdir(os.path.join(cwd, name))
 
-    # Change into Repository
-    os.chdir(os.path.join(cwd, name))
+        readme_exists = False
+        if os.path.isfile('./README.md'): readme_extension = '.md';readme_exists=True
+        if os.path.isfile('./README.metadata'): readme_extension = '.metadata';readme_exists=True
 
-    # If revert_back set then revert to previous commit
-    if revert_back:
-        # Get commit id of previos commit
-        prev_commit_id = subprocess.check_call(['git','log','--grep','"'+commit_to_revert_to+'"', '-pretty=%H'])
-        # TODO: Implement and test reverting to previous commit
-        # https://stackoverflow.com/questions/4114095/how-to-revert-git-repository-to-a-previous-commit
-        subprocess.check_call(["echo", "DANGEROUSLY REVERTING TO:", prev_commit_id])
+        if readme_exists and mod_readme:
 
-    readme_exists = False
-    if os.path.isfile('./README.md'): readme_extension = '.md';readme_exists=True
-    if os.path.isfile('./README.metadata'): readme_extension = '.metadata';readme_exists=True
+            # Store README as string:
+            with open('README'+readme_extension, 'r') as myfile: readme=myfile.read()
+            readme = readme.split("\n")
 
-    if readme_exists and mod_readme:
+            if len(readme) > 2:
+                if readme[0] == appveyor_badge and readme[1] == "" and readme[2] == "":
+                    subprocess.check_call(["echo", "EDITING README FILE"])
+                    readme = readme[2::]
+                    try:
+                        with open('README'+readme_extension, "w") as myfile: myfile.write('\n'.join(readme))
+                        subprocess.check_call(["git", "add", "README"+readme_extension])
+                    except:
+                        subprocess.check_call(["appveyor", "AddMessage", "Issues with Readme File for: "+name,"-Category","warning"])
 
-        # Store README as string:
-        with open('README'+readme_extension, 'r') as myfile: readme=myfile.read()
-        readme = readme.split("\n")
+        # Fetch Remote URL from Git Repository
+        config = configparser.ConfigParser()
+        config.read('.git/config')
+        git_url = config['remote "origin"']['url']
 
-        if len(readme) > 2:
-            if readme[0] == appveyor_badge and readme[1] == "" and readme[2] == "":
-                subprocess.check_call(["echo", "EDITING README FILE"])
-                readme = readme[2::]
-                try:
-                    with open('README'+readme_extension, "w") as myfile: myfile.write('\n'.join(readme))
-                    subprocess.check_call(["git", "add", "README"+readme_extension])
-                except:
-                    subprocess.check_call(["appveyor", "AddMessage", "Issues with Readme File for: "+name,"-Category","warning"])
+        # Get package version number:
+        try:
+            version_number = '.'.join(subprocess.check_output(["git", "describe","--tags"]).split("-")[0:2])[1::]
+        except:
+            version_number = 'not set'
 
-            # For now, no longer adding badges
-            # If first line is not badge then append it
-            # if readme[0] != appveyor_badge:
-            #     readme.insert(0,"\n")
-            #     readme.insert(0,appveyor_badge)
-            #     try:
-            #         with open('README'+readme_extension, "w") as myfile: myfile.write('\n'.join(readme))
-            #         subprocess.check_call(["git", "add", "README"+readme_extension])
-            #     except:
-            #         subprocess.check_call(["appveyor", "AddMessage", "Issues with Readme File for: "+name,"-Category","warning"])
+        # Write to file
+        appveyorFile = open("appveyor.yml","w")
+        appveyorFile.write(template.render({"git_url": git_url, "version_number": version_number}))
+        appveyorFile.close()
 
-    # Fetch Remote URL from Git Repository
-    config = configparser.ConfigParser()
-    config.read('.git/config')
-    git_url = config['remote "origin"']['url']
+        # Commit changes, and push upsteam
+        try:
+            subprocess.check_call(["git", "add", "appveyor.yml"])
+            subprocess.check_call(["git", "commit", "-m", "AppVeyor Update: "+ sci_bots_configs_id])
+            subprocess.check_call(["git", "push", "origin", "master"])
+        except:
+            pass
 
-    # Get package version number:
-    try:
-        version_number = '.'.join(subprocess.check_output(["git", "describe","--tags"]).split("-")[0:2])[1::]
-    except:
-        version_number = 'not set'
+        # Change out of Repository
+        os.chdir(cwd)
 
-    # Write to file
-    appveyorFile = open("appveyor.yml","w")
-    appveyorFile.write(template.render({"git_url": git_url, "version_number": version_number}))
-    appveyorFile.close()
-
-    # Commit changes, and push upsteam
-    try:
-        subprocess.check_call(["git", "add", "appveyor.yml"])
-        subprocess.check_call(["git", "commit", "-m", "AppVeyor Update: "+ sci_bots_configs_id])
-        subprocess.check_call(["git", "push", "origin", "master"])
-    except:
-        pass
-
-    # Change out of Repository
-    os.chdir(cwd)
-
-    # delete Repository
-    rmtree(name)
+        # delete Repository
+        rmtree(name)
