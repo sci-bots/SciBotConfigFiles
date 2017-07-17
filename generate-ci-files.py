@@ -17,14 +17,6 @@ def rmtree(top):
             os.rmdir(os.path.join(root, name))
     os.rmdir(top)
 
-# Load AppVeyor template (for Windows Installs)
-templateEnvironment = Environment( loader=FileSystemLoader( searchpath="./" ) )
-template = templateEnvironment.get_template("appveyor-template.yml")
-
-# Open json file containing all package names:
-with open('wheeler_package_names.json') as data_file:
-    package_names = json.load(data_file)["package_names"]
-
 # Get the ID of the last commit to Sci-Bots-Configs:
 sci_bots_configs_id = subprocess.check_output(['git','log','--format="%H"','-n','1'])
 
@@ -39,6 +31,14 @@ revert_back = '--dangerously-revert-back' in last_commit
 if revert_back: commit_to_revert_to = last_commit[last_commit.index('--dangerously-revert-back')+1]
 
 cwd = os.getcwd()
+
+# Load AppVeyor template (for Windows Installs)
+templateEnvironment = Environment( loader=FileSystemLoader( searchpath="./" ) )
+template = templateEnvironment.get_template("appveyor-template.yml")
+
+# Open json file containing all package names:
+with open('wheeler_package_names.json') as data_file:
+    package_names = json.load(data_file)["package_names"]
 
 for name in package_names:
     # Get markdown for AppVeyor Badge
