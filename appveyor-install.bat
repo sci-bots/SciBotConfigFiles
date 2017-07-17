@@ -25,6 +25,11 @@ echo "Getting package location:"
 FOR /F "tokens=*" %%a in ('conda-build . --output') do SET PACKAGE_LOCATION=%%a
 echo %PACKAGE_LOCATION%
 
+IF %ERRORLEVEL% NEQ 0 (
+  appveyor AddMessage "Failed to get package location. May be problem in meta.yaml file" -Category Failure
+  exit 1
+)
+
 REM Set environment variable for project location (may be used in bld.bat)
 set "PROJECT_DIRECTORY=%cd%"
 
