@@ -97,7 +97,6 @@ if should_rebuild:
             subprocess.check_call(["git", "push", "origin", "master"])
         except:
             pass
-
         # Change out of Repository
         os.chdir(cwd)
 
