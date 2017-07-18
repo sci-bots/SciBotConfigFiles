@@ -3,7 +3,6 @@
 This repository holds all files relating to CI Worlkflow scripts, code snippets, etc. When this repo is pushed to GitHub after making changes, the build script will update the build configuration for all packages in the wheeler-microfluidics organization listed in the *wheeler-package-names.json* file. This then cues these packages to be re-build on AppVeyor with the updated configuration information.
 
 
-
 A table of packages with status information being build by AppVeyor can be found here:
 
 [AppVeyor Package Table](https://benefique-gerard-47512.herokuapp.com/) ([json](https://benefique-gerard-47512.herokuapp.com/json))
