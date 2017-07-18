@@ -83,7 +83,7 @@ if should_rebuild:
         try:
             version_number = '.'.join(subprocess.check_output(["git", "describe","--tags"]).split("-")[0:2])[1::]
         except:
-            version_number = 'not set'
+            version_number = 'not set_'+subprocess.check_output(["git","rev-parse","HEAD"])
 
         # Write to file
         appveyorFile = open("appveyor.yml","w")
