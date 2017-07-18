@@ -6,7 +6,7 @@ This repository holds all files relating to CI Worlkflow scripts, code snippets,
 
 A table of packages with status information being build by AppVeyor can be found here:
 
-[AppVeyor Package Table](https://benefique-gerard-47512.herokuapp.com/)
+[AppVeyor Package Table](https://benefique-gerard-47512.herokuapp.com/) ([json](https://benefique-gerard-47512.herokuapp.com/json))
 
 
 
