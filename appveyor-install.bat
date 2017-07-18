@@ -35,6 +35,10 @@ set "PROJECT_DIRECTORY=%cd%"
 
 REM Build package
 conda-build .
+IF ERRORLEVEL NEQ 0 (
+  appveyor AddMessage "Conda Build Failed" -Category Error
+  exit 1
+)
 
 REM Move back to project directory
 cd %PROJECT_DIRECTORY%
