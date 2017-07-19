@@ -5,6 +5,7 @@ Set-PSDebug -Trace 1
 # Add Conda to path
 $env:PATH = $env:MINICONDA + ";" + $env:PATH;
 $env:PATH = $env:MINICONDA + "\\Scripts;" + $env:PATH;
+Write-Host $env:PATH
 
 # Configure Conda to operate without user input
 conda config --set always_yes yes --set changeps1 no
@@ -31,11 +32,11 @@ if (!$package_location){
   throw $msg
 }
 
-echo "Location set to: " + $package_location
+Write-Host "Location set to: $($package_location)"
 
 # Set environment variable for project directory (may be used in bld.bat)
 $project_directory = (Get-Item -Path ".\" -Verbose).FullName
-echo "Project Directory: " + $project_directory
+Write-Host "Project directory: $($project_directory)"
 
 # Build package
 echo "Building conda package"
