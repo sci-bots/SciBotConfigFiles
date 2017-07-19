@@ -32,6 +32,7 @@ conda build . --output && (
   exit 1
 )
 
+@echo on
 REM Set environment variable for project location (may be used in bld.bat)
 set "PROJECT_DIRECTORY=%cd%"
 
@@ -43,7 +44,7 @@ conda build . && (
   appveyor AddMessage "Conda Build Failed" -Category Error
   exit 1
 )
-
+@echo on
 REM Move back to project directory
 cd %PROJECT_DIRECTORY%
 
