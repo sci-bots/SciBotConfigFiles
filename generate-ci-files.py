@@ -56,7 +56,7 @@ if should_rebuild:
 
         # Clone Repository
         if os.path.isdir('./'+name): rmtree(name)
-        subprocess.check_call(["git", "clone", "https://github.com/wheeler-microfluidics/"+name+".git"])
+        subprocess.check_call(["git", "clone", "-b", "master", "https://github.com/wheeler-microfluidics/"+name+".git"])
 
         # Change into Repository
         os.chdir(os.path.join(cwd, name))
