@@ -24,15 +24,13 @@ REM Get output package location
 echo "Getting package location:"
 REM Run conda build and capture error message, then run again to fetch package
 REM location
-conda build . --output
-IF %errorlevel% NEQ 0 (
+conda build . --output && (
+  FOR /F "tokens=*" %%a in ('conda-build . --output') do SET PACKAGE_LOCATION=%%a
+  echo %PACKAGE_LOCATION%
+) || (
   appveyor AddMessage "Failed to get package location. May be problem in meta.yaml file" -Category Error
   exit 1
 )
-
-FOR /F "tokens=*" %%a in ('conda-build . --output') do SET PACKAGE_LOCATION=%%a
-echo %PACKAGE_LOCATION%
-
 
 REM Set environment variable for project location (may be used in bld.bat)
 set "PROJECT_DIRECTORY=%cd%"
