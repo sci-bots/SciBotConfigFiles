@@ -40,16 +40,15 @@ Write-Host "Project directory: $($env:project_directory)"
 
 # Build package
 echo "Building conda package"
+$build_status = "Success"
 conda build .
-if (!$?) {
-  $msg = "Failed to build conda package";
-  Add-AppveyorMessage -Message $msg -Category Error
-  throw $msg
-}
+if (!$?) { $build_status = "Failure" }
 
 # Move back to project directory
 cd $env:project_directory
 
-# Capture package location
-touch $package_location
+# Capture package location and build status
+touch BUILD_STATUS
+touch PACKAGE_LOCATION
+echo $build_status > BUILD_STATUS
 echo $package_location > PACKAGE_LOCATION

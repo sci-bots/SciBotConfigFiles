@@ -1,6 +1,7 @@
 Set-PSDebug -Trace 1
 # Get the package location, and package name
 $package_location = $(& cat PACKAGE_LOCATION).Trim();
+$build_status = $(& cat BUILD_STATUS).Trim();
 $package_name = (( $package_location -split '\\') | Select-Object -Last 1) -split '\.bz2' | Select-Object -First 1;
 # Echo package name
 echo "Modifying conda package:"
@@ -30,3 +31,10 @@ appveyor PushArtifact $($package_name+'.bz2');
 # Upload Test Results
 $wc = New-Object 'System.Net.WebClient';
 $wc.UploadFile("https://ci.appveyor.com/api/testresults/junit/$($env:APPVEYOR_JOB_ID)", (Resolve-Path .\nosetests.xml));
+
+if ($build_status -eq "Failure") {
+  $msg = "Build or tests failed";
+  $details = "Check output of TESTS";
+  Add-AppveyorMessage -Message $msg -Category Error -Details $details
+  throw $msg
+}
