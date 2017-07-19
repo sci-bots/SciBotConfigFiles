@@ -40,9 +40,8 @@ Write-Host "Project directory: $($env:project_directory)"
 
 # Build package
 echo "Building conda package"
-Try {
-  conda build .
-} Catch {
+conda build .
+if (!$?) {
   $msg = "Failed to build conda package";
   Add-AppveyorMessage -Message $msg -Category Error
   throw $msg
