@@ -1,6 +1,9 @@
 # Get the package location, and package name
 $package_location = $(& cat PACKAGE_LOCATION).Trim();
 $package_name = (( $package_location -split '\\') | Select-Object -Last 1) -split '\.bz2' | Select-Object -First 1;
+# Echo package name
+echo "Modifying conda package:"
+echo $package_name
 
 # Unarchive package
 7z e $package_location -tbzip2;

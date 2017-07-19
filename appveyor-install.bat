@@ -36,8 +36,10 @@ REM Set environment variable for project location (may be used in bld.bat)
 set "PROJECT_DIRECTORY=%cd%"
 
 REM Build package
-conda-build .
-IF %errorlevel% NEQ 0 (
+echo "Building conda package"
+conda build . && (
+  echo "Package built successfully"
+) || (
   appveyor AddMessage "Conda Build Failed" -Category Error
   exit 1
 )
