@@ -1,3 +1,4 @@
+Set-PSDebug -Trace 1
 # Batch file for AppVeyor install step
 # Requires MINICONDA and PROJECT_NAME environment variables
 
