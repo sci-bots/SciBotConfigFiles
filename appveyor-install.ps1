@@ -49,7 +49,7 @@ Try {
 }
 
 # Move back to project directory
-cd $project_diectory
+cd $project_directory
 
 # Capture package location
 touch $package_location
