@@ -16,7 +16,7 @@ conda config --add channels wheeler-microfluidics
 
 # Update conda, and install conda-build (used for building in non-root env)
 conda update -q conda
-conda install --yes conda-build anaconda-client
+conda install --yes conda-build anaconda-client nose
 
 # Create and activate new NadaMq environment
 conda create --name $env:APPVEYOR_PROJECT_NAME

@@ -17,7 +17,7 @@ install:
   - conda config --add channels wheeler-microfluidics
 
   # Install requirements for generate-ci-files.py
-  - conda install configparser jinja2 nose
+  - conda install configparser jinja2
 
   # Add access-token for uploading to git
   - git config --global credential.helper store
