@@ -30,16 +30,23 @@ should_rebuild = '--rebuild' in last_commit
 # Check if the commit contains a tag for modify-readme
 mod_readme = '--modify-readme' in last_commit
 
+# Check if building only a particular package, or all of them
+build_single = '--rebuild-single' in last_commit
+if build_single: package_to_build = last_commit[last_commit.index('--rebuild-single')+1]
+
+if rebuild_single:
+    package_names = [package_to_build]
+else:
+    # Open json file containing all package names:
+    with open('wheeler_package_names.json') as data_file:
+        package_names = json.load(data_file)["package_names"]
+
 if should_rebuild:
     cwd = os.getcwd()
 
     # Load AppVeyor template (for Windows Installs)
     templateEnvironment = Environment( loader=FileSystemLoader( searchpath="./" ) )
     template = templateEnvironment.get_template("appveyor-template.yml")
-
-    # Open json file containing all package names:
-    with open('wheeler_package_names.json') as data_file:
-        package_names = json.load(data_file)["package_names"]
 
     for name in package_names:
         # Get markdown for AppVeyor Badge
