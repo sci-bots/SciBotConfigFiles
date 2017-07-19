@@ -72,7 +72,7 @@ if should_rebuild:
             readme = readme.split("\n")
 
             if len(readme) > 2:
-                if readme[0] == appveyor_badge and readme[1] == "" and readme[2] == "":
+                if readme[0] == "" and readme[1] == appveyor_badge and readme[2] == "":
                     subprocess.check_call(["echo", "EDITING README FILE"])
                     readme = readme[2::]
                     try:
