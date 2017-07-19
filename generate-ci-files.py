@@ -34,7 +34,7 @@ mod_readme = '--modify-readme' in last_commit
 build_single = '--rebuild-single' in last_commit
 if build_single: package_to_build = last_commit[last_commit.index('--rebuild-single')+1]
 
-if rebuild_single:
+if build_single:
     package_names = [package_to_build]
 else:
     # Open json file containing all package names:
