@@ -35,8 +35,8 @@ if (!$package_location){
 Write-Host "Location set to: $($package_location)"
 
 # Set environment variable for project directory (may be used in bld.bat)
-$project_directory = (Get-Item -Path ".\" -Verbose).FullName
-Write-Host "Project directory: $($project_directory)"
+$env:project_directory = (Get-Item -Path ".\" -Verbose).FullName
+Write-Host "Project directory: $($env:project_directory)"
 
 # Build package
 echo "Building conda package"
@@ -49,7 +49,7 @@ Try {
 }
 
 # Move back to project directory
-cd $project_directory
+cd $env:project_directory
 
 # Capture package location
 touch $package_location
