@@ -21,12 +21,10 @@ conda create --name %APPVEYOR_PROJECT_NAME%
 call %MINICONDA%\\Scripts\\activate.bat %APPVEYOR_PROJECT_NAME%
 REM conda info -a
 
-REM Get output package location
+REM Run conda build and capture error message, then run again to fetch package location
 echo "Getting package location:"
-REM Run conda build and capture error message, then run again to fetch package
-REM location
 conda build . --output && (
-  FOR /F "tokens=*" %%a in ('conda-build . --output') do SET PACKAGE_LOCATION=%%a
+  FOR /F "tokens=*" %a in ('conda-build . --output') do SET PACKAGE_LOCATION=%a
   echo "Location set to: %PACKAGE_LOCATION%"
 ) || (
   appveyor AddMessage "Failed to get package location. May be problem in meta.yaml file" -Category Error
