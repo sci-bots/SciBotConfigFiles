@@ -1,3 +1,4 @@
+@echo on
 REM Batch file for AppVeyor install step
 REM Requires MINICONDA and PROJECT_NAME environment variables
 
@@ -26,7 +27,7 @@ REM Run conda build and capture error message, then run again to fetch package
 REM location
 conda build . --output && (
   FOR /F "tokens=*" %%a in ('conda-build . --output') do SET PACKAGE_LOCATION=%%a
-  echo %PACKAGE_LOCATION%
+  echo "Location set to: %PACKAGE_LOCATION%"
 ) || (
   appveyor AddMessage "Failed to get package location. May be problem in meta.yaml file" -Category Error
   exit 1
