@@ -88,7 +88,7 @@ if should_rebuild:
 
         # Get package version number:
         try:
-            version_number = '.'.join(subprocess.check_output(["git", "describe","--tags"]).split("-")[0:2])[1::]
+            version_number = '.'.join(subprocess.check_output(["git", "describe","--tags"]).split("-")[0:2])[1::].strip()
         except:
             version_number = 'not set_'+subprocess.check_output(["git","rev-parse","HEAD"])
 
