@@ -21,8 +21,6 @@ conda install --yes conda-build anaconda-client
 conda create --name $env:APPVEYOR_PROJECT_NAME
 activate $env:APPVEYOR_PROJECT_NAME
 
-# conda info -a
-
 # Run conda build and capture error message, then run again to fetch package location
 echo "Getting package location:"
 $package_location = conda build . --output
