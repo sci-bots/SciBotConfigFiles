@@ -37,7 +37,7 @@ Write-Host "Project directory: $($env:project_directory)"
 
 # Build Package (skip testing stage)
 conda build . --build-only --dirty
-if (!$?) { $build_status = "Failure" }
+if (!$?) { $build_status = "Failed Conda Build Stage" }
 $src_dir = $(ls $("$($env:MINICONDA)\\conda-bld") *$($env:APPVEYOR_PROJECT_NAME)* -Directory)[0].FullName
 
 # Add src_dir to path (to re-activate the build environment)
@@ -48,7 +48,7 @@ cd $env:project_directory
 
 # Run nosetests, and check if any tests failed
 nosetests $src_dir\\work -vv --with-xunit
-if (!$?) {$build_status = "Failure"}
+if (!$?) {$build_status = "Failed Nosetests"}
 
 # Delete working environment
 conda build purge
@@ -58,7 +58,7 @@ Write-Host "Getting package location:"
 $package_location = conda build . --output
 Write-Host "Building Package: $($package_location)"
 conda build .
-if (!$?) {$build_status = "Failure"}
+if (!$?) {$build_status = "Failed Conda Tests Stage"}
 
 # Capture package location and build status
 touch BUILD_STATUS

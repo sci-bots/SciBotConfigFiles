@@ -32,8 +32,8 @@ appveyor PushArtifact $($package_name+'.bz2');
 $wc = New-Object 'System.Net.WebClient';
 $wc.UploadFile("https://ci.appveyor.com/api/testresults/junit/$($env:APPVEYOR_JOB_ID)", (Resolve-Path .\nosetests.xml));
 
-if ($build_status -eq "Failure") {
-  $msg = "Build or tests failed";
+if ($build_status -ne "Success") {
+  $msg = $build_status;
   $details = "Check output of TESTS";
   Add-AppveyorMessage -Message $msg -Category Error -Details $details
   throw $msg
