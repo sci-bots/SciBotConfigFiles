@@ -21,31 +21,44 @@ conda install --yes conda-build anaconda-client nose
 # Create and activate new NadaMq environment
 conda create --name $env:APPVEYOR_PROJECT_NAME
 activate $env:APPVEYOR_PROJECT_NAME
+$build_status = "Success"
 
-# Run conda build and capture error message, then run again to fetch package location
-echo "Getting package location:"
-$package_location = conda build . --output
-if (!$package_location){
+# Check for issues in meta yaml file:
+if (!$(conda build . --output)){
   $msg = "Failed to get package info";
   $details = "check for issues in conda-recipes meta.yaml file";
   Add-AppveyorMessage -Message $msg -Category Error -Details $details
   throw $msg
 }
 
-Write-Host "Location set to: $($package_location)"
-
 # Set environment variable for project directory (may be used in bld.bat)
 $env:project_directory = (Get-Item -Path ".\" -Verbose).FullName
 Write-Host "Project directory: $($env:project_directory)"
 
-# Build package
-echo "Building conda package"
-$build_status = "Success"
-conda build .
+# Build Package (skip testing stage)
+conda build . --build-only --dirty
 if (!$?) { $build_status = "Failure" }
+$src_dir = $(ls $("$($env:MINICONDA)\\conda-bld") *$($env:APPVEYOR_PROJECT_NAME)* -Directory)[0].FullName
+
+# Add src_dir to path (to re-activate the build environment)
+$env:path = "$($src_dir)\_b_env;$($src_dir)\_b_env\Scripts;$($env:path)"
 
 # Move back to project directory
 cd $env:project_directory
+
+# Run nosetests, and check if any tests failed
+nosetests $src_dir\\work -vv --with-xunit
+if (!$?) {$build_status = "Failure"}
+
+# Delete working environment
+conda build purge
+
+# Build package again without skipping tests
+Write-Host "Getting package location:"
+$package_location = conda build . --output
+Write-Host "Building Package: $($package_location)"
+conda build .
+if (!$?) {$build_status = "Failure"}
 
 # Capture package location and build status
 touch BUILD_STATUS
