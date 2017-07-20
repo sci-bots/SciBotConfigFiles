@@ -71,10 +71,10 @@ if should_rebuild:
             with open('README'+readme_extension, 'r') as myfile: readme=myfile.read()
             readme = readme.split("\n")
 
-            if len(readme) > 2:
-                if readme[0] == "" and readme[1] == appveyor_badge and readme[2] == "":
+            if len(readme) > 0:
+                if readme[0] == appveyor_badge:
                     subprocess.check_call(["echo", "EDITING README FILE"])
-                    readme = readme[2::]
+                    readme = readme[1::]
                     try:
                         with open('README'+readme_extension, "w") as myfile: myfile.write('\n'.join(readme))
                         subprocess.check_call(["git", "add", "README"+readme_extension])
