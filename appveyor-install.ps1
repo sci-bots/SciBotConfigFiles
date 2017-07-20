@@ -40,8 +40,9 @@ conda build . --build-only --dirty
 if (!$?) { $build_status = "Failed Conda Build Stage" }
 $src_dir = $(ls $("$($env:MINICONDA)\\conda-bld") *$($env:APPVEYOR_PROJECT_NAME)* -Directory)[0].FullName
 
-# Add src_dir to path (to re-activate the build environment)
-$env:path = "$($src_dir)\_b_env;$($src_dir)\_b_env\Scripts;$($env:path)"
+# Activate the environment contained by the source directory
+cmd /c "activate $($src_dir)\_b_env & powershell"
+#$env:path = "$($src_dir)\_b_env;$($src_dir)\_b_env\Scripts;$($env:path)"
 
 # Move back to project directory
 cd $env:project_directory
