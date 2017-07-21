@@ -1,4 +1,6 @@
 Set-PSDebug -Trace 1
+Set-ExecutionPolicy RemoteSigned
+
 # Batch file for AppVeyor install step
 # Requires MINICONDA and PROJECT_NAME environment variables
 
@@ -6,6 +8,13 @@ Set-PSDebug -Trace 1
 $env:PATH = $env:MINICONDA + ";" + $env:PATH;
 $env:PATH = $env:MINICONDA + "\\Scripts;" + $env:PATH;
 Write-Host $env:PATH
+
+# Clone powershell activation scripts for conda
+git clone https://github.com/Liquidmantis/PSCondaEnvs
+
+# Copy activation scripts into miniconda install
+cp .\PSCondaEnvs\activate.ps1 $env:MINICONDA\Scripts\activate.ps1
+cp .\PSCondaEnvs\deactivate.ps1 $env:MINICONDA\Scripts\deactivate.ps1
 
 # Configure Conda to operate without user input
 conda config --set always_yes yes --set changeps1 no
@@ -20,7 +29,7 @@ conda install --yes conda-build anaconda-client nose
 
 # Create and activate new NadaMq environment
 conda create --name $env:APPVEYOR_PROJECT_NAME
-activate $env:APPVEYOR_PROJECT_NAME
+activate.ps1 $env:APPVEYOR_PROJECT_NAME
 $build_status = "Success"
 
 # Check for issues in meta yaml file:
@@ -41,7 +50,7 @@ if (!$?) { $build_status = "Failed Conda Build Stage" }
 $src_dir = $(ls $("$($env:MINICONDA)\\conda-bld") *$($env:APPVEYOR_PROJECT_NAME)* -Directory)[0].FullName
 
 # Activate the environment contained by the source directory
-cmd /c "activate $($src_dir)\_b_env & powershell"
+activate.ps1 $($src_dir)\_b_env
 #$env:path = "$($src_dir)\_b_env;$($src_dir)\_b_env\Scripts;$($env:path)"
 
 # Move back to project directory

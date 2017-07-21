@@ -1,4 +1,6 @@
 Set-PSDebug -Trace 1
+Set-ExecutionPolicy RemoteSigned
+
 # Get the package location, and package name
 $package_location = $(& cat PACKAGE_LOCATION).Trim();
 $build_status = $(& cat BUILD_STATUS).Trim();
