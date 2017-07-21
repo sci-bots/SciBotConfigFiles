@@ -23,7 +23,7 @@ $json | ConvertTo-JSON | % { [System.Text.RegularExpressions.Regex]::Unescape($_
 7z a $($package_name+'.bz2') $package_name -tbzip2;
 
 # Save tarfile as artifact
-appveyor PushArtifact $($package_name+'.bz2');
+appveyor PushArtifact $($package_name+'.bz2') -DeploymentName "tarfile";
 
 # Upload to Anaconda Cloud
 # binstar -t $($BINSTAR_TOKEN) upload --force $($package_name+'.bz2');
