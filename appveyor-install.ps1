@@ -2,15 +2,11 @@ Set-PSDebug -Trace 1
 Set-ExecutionPolicy RemoteSigned
 
 # Set version number:
-$repo = git remote get-url origin
-git clone $repo -b master
-cd $env:APPVEYOR_PROJECT_NAME
-$x = git describe master --tags
-cd ..
-Write-Host "Git Describe Output:"
-Write-Host $x
-$gitDescribe = $x.Substring(1).Split("-")
-$buildTag = $gitDescribe[0] + "." + $gitDescribe[1] + "." + $env:APPVEYOR_BUILD_NUMBER
+$x = git describe --tags
+if (!$?){ $prevTag="v0.0-0"
+} else  { $prevTag = $x.Split("-")[0] + "-" + $x.Split("-")[1] }
+
+$buildTag = $prevTag + "+" + $(Get-Date -Format FileDateTime)
 Write-Host "Build Tag: $(buildTag)"
 Update-AppveyorBuild -Version $buildTag
 
