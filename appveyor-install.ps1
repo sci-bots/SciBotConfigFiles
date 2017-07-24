@@ -3,6 +3,9 @@ Set-ExecutionPolicy RemoteSigned
 
 # Set version number:
 git checkout origin/master -qf
+git remote show origin
+git remote get-url origin
+
 $x = git describe master --tags
 Write-Host "Git Describe Output:"
 Write-Host $x
