@@ -2,7 +2,7 @@ Set-PSDebug -Trace 1
 Set-ExecutionPolicy RemoteSigned
 
 # Set version number:
-$x = git describe --tags
+$x = git describe --tags master
 Write-Host "Git Describe Output:"
 Write-Host $x
 $gitDescribe = $x.Substring(1).Split("-")
