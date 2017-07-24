@@ -5,6 +5,7 @@ Set-ExecutionPolicy RemoteSigned
 $x = git describe --tags
 $gitDescribe = $x.Substring(1).Split("-")
 $buildTag = $gitDescribe[0] + "." + $gitDescribe[1] + "." + $env:APPVEYOR_BUILD_NUMBER
+Write-Host "Build Tag: $(buildTag)"
 Update-AppveyorBuild -Version $buildTag
 
 # Batch file for AppVeyor install step
