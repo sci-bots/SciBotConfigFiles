@@ -3,6 +3,8 @@ Set-ExecutionPolicy RemoteSigned
 
 # Set version number:
 $x = git describe --tags
+Write-Host "Git Describe Output:"
+Write-Host $x
 $gitDescribe = $x.Substring(1).Split("-")
 $buildTag = $gitDescribe[0] + "." + $gitDescribe[1] + "." + $env:APPVEYOR_BUILD_NUMBER
 Write-Host "Build Tag: $(buildTag)"
