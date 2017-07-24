@@ -4,7 +4,7 @@ Set-ExecutionPolicy RemoteSigned
 # Set version number:
 $repo = git remote get-url origin
 git clone $repo -b master
-cd $env:APPVEYOR_REPO_NAME
+cd $env:APPVEYOR_PROJECT_NAME
 $x = git describe master --tags
 cd ..
 Write-Host "Git Describe Output:"
