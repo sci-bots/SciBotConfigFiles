@@ -54,7 +54,14 @@ Write-Host "SRC Directory: $($src_dir)"
 
 # Activate the environment contained by the source directory
 # activate.ps1 $($src_dir)\_b_env
-$env:path = "$($src_dir)\_b_env;$($src_dir)\_b_env\Scripts;$($env:path)"
+$build_env "$($src_dir)\_b_env;$($src_dir)\_b_env\Scripts"
+$env:path = "$($build_env);$($env:path)"
+
+# Show python location (ensure its in _b_env)
+Write-Host "Build Environment: "
+Write-Host $build_env
+Write-Host "Python Location: "
+where python
 
 # Move back to project directory
 cd $env:project_directory
