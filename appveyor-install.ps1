@@ -1,6 +1,12 @@
 Set-PSDebug -Trace 1
 Set-ExecutionPolicy RemoteSigned
 
+# Set version number:
+$x = git describe --tags
+$gitDescribe = $x.Substring(1).Split("-")
+$buildTag = $gitDescribe[0] + "." + $gitDescribe[1] + "." + $env:APPVEYOR_BUILD_NUMBER
+Update-AppveyorBuild -Version $buildTag
+
 # Batch file for AppVeyor install step
 # Requires MINICONDA and PROJECT_NAME environment variables
 
