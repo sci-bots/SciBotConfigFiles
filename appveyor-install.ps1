@@ -61,7 +61,7 @@ $env:path = "$($build_env);$($env:path)"
 Write-Host "Build Environment: "
 Write-Host $build_env
 Write-Host "Python Location: "
-where python
+where.exe python
 
 # Move back to project directory
 cd $env:project_directory
