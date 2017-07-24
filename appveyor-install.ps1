@@ -10,6 +10,8 @@ $env:PATH = $env:MINICONDA + "\\Scripts;" + $env:PATH;
 Write-Host $env:PATH
 
 # Clone powershell activation scripts for conda
+# Note: PSCondaEnvs does not update registry, requires python.exe, and doesnt
+# support activation via passing directory
 git clone https://github.com/Liquidmantis/PSCondaEnvs
 
 # Copy activation scripts into miniconda install
@@ -28,7 +30,7 @@ conda update -q conda
 conda install --yes conda-build anaconda-client nose
 
 # Create and activate new NadaMq environment
-conda create --name $env:APPVEYOR_PROJECT_NAME
+conda create --name $env:APPVEYOR_PROJECT_NAME python
 activate.ps1 $env:APPVEYOR_PROJECT_NAME
 $build_status = "Success"
 
@@ -48,10 +50,11 @@ Write-Host "Project directory: $($env:project_directory)"
 conda build . --build-only --dirty
 if (!$?) { $build_status = "Failed Conda Build Stage" }
 $src_dir = $(ls $("$($env:MINICONDA)\\conda-bld") *$($env:APPVEYOR_PROJECT_NAME)* -Directory)[0].FullName
+Write-Host "SRC Directory: $($src_dir)"
 
 # Activate the environment contained by the source directory
-activate.ps1 $($src_dir)\_b_env
-#$env:path = "$($src_dir)\_b_env;$($src_dir)\_b_env\Scripts;$($env:path)"
+# activate.ps1 $($src_dir)\_b_env
+$env:path = "$($src_dir)\_b_env;$($src_dir)\_b_env\Scripts;$($env:path)"
 
 # Move back to project directory
 cd $env:project_directory
