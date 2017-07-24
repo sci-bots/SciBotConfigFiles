@@ -6,16 +6,16 @@ environment:
       PYTHON_ARCH: "32"
 
 init:
-  - "ECHO %PYTHON_VERSION% %MINICONDA%"
-  - cmd: "set appVeyorBuildVersion=%appveyor_build_version%"
-  - cmd: "echo appVeyorBuildVersion:%appVeyorBuildVersion%"
-  - cmd: "set branch=%APPVEYOR_REPO_BRANCH%"
-  - cmd: "echo branch:%branch%"
-  - cmd: "set gitVersion=%branch:~-3%"
-  - cmd: "echo gitversion:%gitVersion%"
-  - cmd: "set newVersion=%gitVersion%.%APPVEYOR_BUILD_NUMBER%"
-  - cmd: "echo %newVersion%"
-  - cmd: "appveyor UpdateBuild -Version "%newVersion%"
+  - ECHO %PYTHON_VERSION% %MINICONDA%
+  - set appVeyorBuildVersion=%appveyor_build_version%
+  - echo appVeyorBuildVersion:%appVeyorBuildVersion%
+  - set branch=%APPVEYOR_REPO_BRANCH%
+  - echo branch:%branch%
+  - set gitVersion=%branch:~-3%
+  - echo gitversion:%gitVersion%
+  - set newVersion=%gitVersion%.%APPVEYOR_BUILD_NUMBER%
+  - echo %newVersion%
+  - appveyor UpdateBuild -Version "%newVersion%"
 
 install:
   # Exit if no .conda-recipe folder
