@@ -18,21 +18,15 @@ $env:PATH = $env:MINICONDA + ";" + $env:PATH;
 $env:PATH = $env:MINICONDA + "\\Scripts;" + $env:PATH;
 Write-Host $env:PATH
 
-# Clone powershell activation scripts for conda
-# Note: PSCondaEnvs does not update registry, requires python.exe, and doesnt
-# support activation via passing directory
-git clone https://github.com/Liquidmantis/PSCondaEnvs
-
-# Copy activation scripts into miniconda install
-cp .\PSCondaEnvs\activate.ps1 $env:MINICONDA\Scripts\activate.ps1
-cp .\PSCondaEnvs\deactivate.ps1 $env:MINICONDA\Scripts\deactivate.ps1
-
 # Configure Conda to operate without user input
 conda config --set always_yes yes --set changeps1 no
 
 # Add the conda-force, and wheeler-microfluidics channels
 conda config --add channels conda-forge
 conda config --add channels wheeler-microfluidics
+
+# Use PSCondaEnvs to allow activation using powershell:
+conda install -n root -c pscondaenvs pscondaenvs
 
 # Update conda, and install conda-build (used for building in non-root env)
 conda update -q conda
@@ -59,12 +53,17 @@ Write-Host "Project directory: $($env:project_directory)"
 conda build . --build-only --dirty
 if (!$?) { $build_status = "Failed Conda Build Stage" }
 $src_dir = $(ls $("$($env:MINICONDA)\\conda-bld") *$($env:APPVEYOR_PROJECT_NAME)* -Directory)[0].FullName
+if (!$src_dir) { 
+  $msg = "Project name does not match conda package name"
+  Add-AppveyorMessage -Message $msg -Category Error
+}
+
 Write-Host "SRC Directory: $($src_dir)"
 
 # Activate the environment contained by the source directory
-# activate.ps1 $($src_dir)\_b_env
-$build_env = "$($src_dir)\_b_env;$($src_dir)\_b_env\Scripts"
-$env:path = "$($build_env);$($env:path)"
+activate.ps1 $($src_dir)\_b_env
+# $build_env = "$($src_dir)\_b_env;$($src_dir)\_b_env\Scripts"
+# $env:path = "$($build_env);$($env:path)"
 
 # Show python location (ensure its in _b_env)
 Write-Host "Build Environment: "
