@@ -54,8 +54,9 @@ conda build . --build-only --dirty
 if (!$?) { $build_status = "Failed Conda Build Stage" }
 $src_dir = $(ls $("$($env:MINICONDA)\\conda-bld") *$($env:APPVEYOR_PROJECT_NAME)* -Directory)[0].FullName
 if (!$src_dir) { 
-  $msg = "Project name does not match conda package name"
-  Add-AppveyorMessage -Message $msg -Category Error
+  $msg = "Cannot find src_dir: the project name may not match conda name."
+  $details = "This will cause nosetests to fail."
+  Add-AppveyorMessage -Message $msg -Category Error -Details $details
 }
 
 Write-Host "SRC Directory: $($src_dir)"
