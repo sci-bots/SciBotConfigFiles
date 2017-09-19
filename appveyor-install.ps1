@@ -7,7 +7,7 @@ if (!$?){ $prevTag="v0.0-0"
 } else  { $prevTag = $x.Split("-")[0] + "-" + $x.Split("-")[1] }
 
 $buildTag = $prevTag + "+" + $(Get-Date -Format FileDateTime)
-Write-Host "Build Tag: $(buildTag)"
+Write-Host "Build Tag: $buildTag"
 Update-AppveyorBuild -Version $buildTag
 
 # Batch file for AppVeyor install step
@@ -85,7 +85,7 @@ conda build purge
 # Build package again without skipping tests
 Write-Host "Getting package location:"
 $package_location = conda build . --output
-Write-Host "Building Package: $($package_location)"
+Write-Host "Building Package: $package_location"
 conda build .
 if (!$?) {$build_status = "Failed Conda Tests Stage"}
 
