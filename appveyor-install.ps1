@@ -13,28 +13,30 @@ Update-AppveyorBuild -Version $buildTag
 # Batch file for AppVeyor install step
 # Requires MINICONDA and PROJECT_NAME environment variables
 
-# Add Conda to path
-$env:PATH = $env:MINICONDA + ";" + $env:PATH;
-$env:PATH = $env:MINICONDA + "\\Scripts;" + $env:PATH;
-Write-Host $env:PATH
-
 # Configure Conda to operate without user input
-conda config --set always_yes yes --set changeps1 no
+& $env:MINICONDA\Scripts\conda.exe config --set always_yes yes --set changeps1 no
 
-# Add the conda-force, and wheeler-microfluidics channels
-conda config --add channels conda-forge
-conda config --add channels wheeler-microfluidics
+Write-Host "Update conda"
+& $env:MINICONDA\Scripts\conda.exe install -q "conda>=4.6.11"
 
-# Use PSCondaEnvs to allow activation using powershell:
-conda install -n root -c pscondaenvs pscondaenvs
+Write-Host "Initialize Conda Powershell support and activate base environment."
+(& $env:MINICONDA\Scripts\conda.exe "shell.powershell" "hook") | Out-String | Invoke-Expression
+
+# Allow extra Conda channels to be added (e.g., for testing).
+if ($env:CONDA_EXTRA_CHANNELS) {
+    $env:CONDA_EXTRA_CHANNELS.Split(";") | ForEach {
+        Write-Host "Adding Conda channel from %CONDA_EXTRA_CHANNELS%: $_"
+        conda config --add channels $_
+    }
+}
 
 # Update conda, and install conda-build (used for building in non-root env)
 conda update -q conda
 conda install --yes conda-build anaconda-client nose
 
-# Create and activate new NadaMq environment
+# Create and activate new environment
 conda create --name $env:APPVEYOR_PROJECT_NAME python
-activate.ps1 $env:APPVEYOR_PROJECT_NAME
+conda activate $env:APPVEYOR_PROJECT_NAME
 $build_status = "Success"
 
 # Check for issues in meta yaml file:
@@ -62,7 +64,7 @@ if (!$src_dir) {
 Write-Host "SRC Directory: $($src_dir)"
 
 # Activate the environment contained by the source directory
-activate.ps1 $($src_dir)\_b_env
+conda activate $($src_dir)\_b_env
 # $build_env = "$($src_dir)\_b_env;$($src_dir)\_b_env\Scripts"
 # $env:path = "$($build_env);$($env:path)"
 
